@@ -128,21 +128,51 @@ if st.button("🚀 Translate", type="primary"):
     else:
         try:
             translated_text = translator.translate_text(
-                input_text, source_language, target_language
+                input_text,
+                source_language,
+                target_language,
             )
 
             st.session_state["translated_text"] = translated_text
 
             st.success("Translation completed successfully!")
 
-            st.text_area("Translated Text", translated_text, height=180)
+            st.text_area(
+                "Translated Text",
+                translated_text,
+                height=180,
+            )
 
-            if st.button("📋 Copy Translation"):
+            col1, col2 = st.columns(2)
 
-                if copy_to_clipboard(translated_text):
-                    st.success("Translation copied to clipboard!")
-                else:
-                    st.error("Unable to copy the translation.")
+            with col1:
+                if st.button("📋 Copy Translation"):
+
+                    if copy_to_clipboard(translated_text):
+                        st.success("Translation copied to clipboard!")
+                    else:
+                        st.error("Unable to copy the translation.")
+
+            with col2:
+                if st.button("🔊 Listen"):
+
+                    try:
+                        with st.spinner("Generating audio..."):
+
+                            audio_path = tts.generate_audio(
+                                translated_text,
+                                target_language,
+                            )
+
+                            with open(audio_path, "rb") as audio_file:
+                                audio_bytes = audio_file.read()
+
+                            st.audio(audio_bytes)
+
+                            tts.delete_audio(audio_path)
+
+                    except Exception as e:
+                        st.error(f"Audio Error: {e}")
 
         except Exception as e:
-            st.error(f"Error: {e}")
+            st.error(f"Translation Error: {e}")

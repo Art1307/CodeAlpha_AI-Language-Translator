@@ -25,7 +25,7 @@ class TextToSpeech:
             "Telugu": "te",
             "Marathi": "mr",
             "Punjabi": "pa",
-            "Urdu": "ur"
+            "Urdu": "ur",
         }
 
     def generate_audio(self, text, language):
@@ -35,22 +35,13 @@ class TextToSpeech:
 
         lang = self.language_map.get(language, "en")
 
-        temp_file = tempfile.NamedTemporaryFile(
-            delete=False,
-            suffix=".mp3"
-        )
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
+            tts = gTTS(text=text, lang=lang, slow=False)
+            tts.save(temp_file.name)
 
-        tts = gTTS(
-            text=text,
-            lang=lang,
-            slow=False
-        )
-
-        tts.save(temp_file.name)
-
-        return temp_file.name
+            return temp_file.name
 
     def delete_audio(self, filepath):
 
-        if os.path.exists(filepath):
+        if filepath and os.path.exists(filepath):
             os.remove(filepath)
