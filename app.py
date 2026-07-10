@@ -305,3 +305,111 @@ with tool_col3:
         use_container_width=True,
         disabled=not st.session_state["translated_text"],
     )
+# ==========================================================
+# TRANSLATION HISTORY
+# ==========================================================
+
+st.divider()
+
+history_col1, history_col2 = st.columns([8, 2])
+
+with history_col1:
+    st.subheader("🕒 Recent Translations")
+
+with history_col2:
+
+    if st.button(
+        "🗑️ Clear History",
+        use_container_width=True,
+        disabled=len(st.session_state["history"]) == 0,
+    ):
+
+        st.session_state["history"] = []
+        st.rerun()
+
+# ----------------------------------------------------------
+
+if len(st.session_state["history"]) == 0:
+
+    st.info("No translations yet.")
+
+else:
+
+    history = list(reversed(st.session_state["history"]))
+
+    for i, item in enumerate(history):
+
+        with st.expander(
+            f"{i+1}. {item['source']} → {item['target']}",
+            expanded=False,
+        ):
+
+            st.markdown("**Input**")
+
+            st.write(item["input"])
+
+            st.markdown("**Output**")
+
+            st.write(item["output"])
+
+# ==========================================================
+# SESSION STATISTICS
+# ==========================================================
+
+st.divider()
+
+st.subheader("📊 Session Statistics")
+
+stat1, stat2, stat3 = st.columns(3)
+
+stat1.metric(
+    "Total Translations",
+    len(st.session_state["history"]),
+)
+
+languages_used = set()
+
+for item in st.session_state["history"]:
+
+    languages_used.add(item["source"])
+    languages_used.add(item["target"])
+
+stat2.metric(
+    "Languages Used",
+    len(languages_used),
+)
+
+characters = 0
+
+for item in st.session_state["history"]:
+
+    characters += len(item["input"])
+
+stat3.metric(
+    "Characters Translated",
+    characters,
+)
+
+# ==========================================================
+# FOOTER
+# ==========================================================
+
+st.divider()
+
+st.markdown(
+    """
+<div style='text-align:center;color:gray;padding:10px;'>
+
+Made with ❤️ using
+<b>Python</b>,
+<b>Streamlit</b>,
+<b>Google Translate</b>
+
+<br><br>
+
+Developed by <b>Anurup Tiwari</b>
+
+</div>
+""",
+    unsafe_allow_html=True,
+)
