@@ -22,5 +22,5 @@ FEATURES = [
     "Copy Translation",
     "Text To Speech",
     "Swap Languages",
-    "Translation History"
+    "Translation History",
 ]

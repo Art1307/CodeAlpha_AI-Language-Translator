@@ -89,18 +89,26 @@ with st.sidebar:
 
 st.markdown(
     f"""
-<div class="main-title">
-{APP_ICON} {APP_TITLE}
-</div>
+    <div class="main-title">
+        {APP_ICON} {APP_TITLE}
+    </div>
 
-<div class="subtitle">
-{APP_SUBTITLE}
-</div>
-""",
+    <div class="subtitle">
+        {APP_SUBTITLE}
+        <br><br>
+        <span style="font-size:15px;">
+            ✨ Powered by Artificial Intelligence • CodeAlpha Internship Project
+        </span>
+    </div>
+    """,
     unsafe_allow_html=True,
 )
 
 st.divider()
+
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
+st.subheader("🌐 Language Selection")
 
 # ==========================================================
 # LANGUAGE SELECTION
@@ -216,6 +224,7 @@ if translate_clicked:
         except Exception as e:
 
             st.error(str(e))
+            st.markdown("</div>", unsafe_allow_html=True)
 
 # ==========================================================
 # OUTPUT
@@ -223,13 +232,58 @@ if translate_clicked:
 
 if st.session_state["translated_text"]:
 
-    st.success("Translation completed successfully.")
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
+    st.subheader("📄 Translation")
 
     st.text_area(
-        "📄 Translated Text",
+        "",
         value=st.session_state["translated_text"],
         height=220,
+        key="translated_output",
     )
+
+    st.write("")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+
+        if st.button("📋 Copy", use_container_width=True):
+
+            if copy_to_clipboard(st.session_state["translated_text"]):
+                st.success("Copied successfully!")
+
+    with col2:
+
+        if st.button("🔊 Listen", use_container_width=True):
+
+            try:
+
+                audio_path = tts.generate_audio(
+                    st.session_state["translated_text"],
+                    st.session_state["target_language"],
+                )
+
+                with open(audio_path, "rb") as audio_file:
+                    st.audio(audio_file.read())
+
+                tts.delete_audio(audio_path)
+
+            except Exception as e:
+                st.error(str(e))
+
+    with col3:
+
+        st.download_button(
+            "📥 Download",
+            st.session_state["translated_text"],
+            file_name="translation.txt",
+            mime="text/plain",
+            use_container_width=True,
+        )
+
+    st.markdown("</div>", unsafe_allow_html=True)
 # ==========================================================
 # TOOLS
 # ==========================================================
@@ -305,6 +359,9 @@ with tool_col3:
         use_container_width=True,
         disabled=not st.session_state["translated_text"],
     )
+    st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+
+st.subheader("🕒 Recent Translations")
 # ==========================================================
 # TRANSLATION HISTORY
 # ==========================================================
@@ -352,11 +409,15 @@ else:
 
             st.write(item["output"])
 
+            st.markdown("</div>", unsafe_allow_html=True)
+
 # ==========================================================
 # SESSION STATISTICS
 # ==========================================================
 
 st.divider()
+
+st.markdown('<div class="glass-card">', unsafe_allow_html=True)
 
 st.subheader("📊 Session Statistics")
 
@@ -370,7 +431,6 @@ stat1.metric(
 languages_used = set()
 
 for item in st.session_state["history"]:
-
     languages_used.add(item["source"])
     languages_used.add(item["target"])
 
@@ -382,7 +442,6 @@ stat2.metric(
 characters = 0
 
 for item in st.session_state["history"]:
-
     characters += len(item["input"])
 
 stat3.metric(
@@ -390,24 +449,21 @@ stat3.metric(
     characters,
 )
 
+st.markdown("</div>", unsafe_allow_html=True)
+
 # ==========================================================
 # FOOTER
 # ==========================================================
 
-st.divider()
-
 st.markdown(
     """
-<div style='text-align:center;color:gray;padding:10px;'>
+<div class="footer">
 
-Made with ❤️ using
-<b>Python</b>,
-<b>Streamlit</b>,
-<b>Google Translate</b>
+Made with ❤️ using Python • Streamlit • Google Translate
 
 <br><br>
 
-Developed by <b>Anurup Tiwari</b>
+© 2026 Anurup Tiwari
 
 </div>
 """,
