@@ -121,12 +121,13 @@ if st.button("🚀 Translate", type="primary"):
 
     else:
         try:
-
             translated_text = translator.translate_text(
                 input_text,
                 source_language,
                 target_language
             )
+
+            st.session_state["translated_text"] = translated_text
 
             st.success("Translation completed successfully!")
 
@@ -135,6 +136,13 @@ if st.button("🚀 Translate", type="primary"):
                 translated_text,
                 height=180
             )
+
+            if st.button("📋 Copy Translation"):
+
+                if copy_to_clipboard(translated_text):
+                    st.success("Translation copied to clipboard!")
+                else:
+                    st.error("Unable to copy the translation.")
 
         except Exception as e:
             st.error(f"Error: {e}")
