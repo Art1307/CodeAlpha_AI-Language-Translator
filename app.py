@@ -110,3 +110,31 @@ input_text = st.text_area(
     height=180,
     placeholder="Type something here..."
 )
+# -----------------------------
+# TRANSLATE BUTTON
+# -----------------------------
+
+if st.button("🚀 Translate", type="primary"):
+
+    if not input_text.strip():
+        st.warning("Please enter some text to translate.")
+
+    else:
+        try:
+
+            translated_text = translator.translate_text(
+                input_text,
+                source_language,
+                target_language
+            )
+
+            st.success("Translation completed successfully!")
+
+            st.text_area(
+                "Translated Text",
+                translated_text,
+                height=180
+            )
+
+        except Exception as e:
+            st.error(f"Error: {e}")
