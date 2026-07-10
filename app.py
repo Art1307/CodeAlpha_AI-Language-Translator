@@ -38,28 +38,57 @@ st.markdown("""
 <style>
 
 .main-title{
-    text-align:center;
-    font-size:42px;
-    font-weight:bold;
-    color:#4F8BF9;
+
+text-align:center;
+
+font-size:48px;
+
+font-weight:700;
+
+color:#4F8BF9;
+
+margin-top:10px;
+
 }
 
 .subtitle{
-    text-align:center;
-    font-size:18px;
-    color:gray;
-    margin-bottom:30px;
+
+text-align:center;
+
+font-size:18px;
+
+color:gray;
+
+margin-bottom:25px;
+
 }
 
 .stButton>button{
-    width:100%;
-    border-radius:12px;
-    font-size:17px;
-    font-weight:bold;
+
+width:100%;
+
+height:45px;
+
+border-radius:12px;
+
+font-weight:bold;
+
+font-size:17px;
+
 }
 
 textarea{
-    font-size:17px !important;
+
+font-size:17px !important;
+
+}
+
+.block-container{
+
+padding-top:2rem;
+
+padding-bottom:2rem;
+
 }
 
 </style>
@@ -70,7 +99,15 @@ textarea{
 # -----------------------------
 
 st.markdown(
-    "<div class='main-title'>🌍 AI Language Translator</div>",
+    """
+    <div class='main-title'>
+        🌍 AI Language Translator
+    </div>
+
+    <div class='subtitle'>
+        Translate text between 100+ languages using Artificial Intelligence
+    </div>
+    """,
     unsafe_allow_html=True
 )
 
@@ -80,7 +117,45 @@ st.markdown(
 )
 
 st.divider()
+# -----------------------------
+# SIDEBAR
+# -----------------------------
 
+with st.sidebar:
+
+    st.title("🌍 AI Language Translator")
+
+    st.markdown("---")
+
+    st.subheader("📌 About")
+
+    st.write("""
+Translate text instantly between multiple languages using
+Google Translate AI.
+
+This project is developed as part of the
+**CodeAlpha Artificial Intelligence Internship**.
+""")
+
+    st.markdown("---")
+
+    st.subheader("✨ Features")
+
+    st.success("✔ AI Translation")
+    st.success("✔ 100+ Languages")
+    st.success("✔ Copy Translation")
+
+    st.info("🔜 Text-to-Speech")
+    st.info("🔜 Translation History")
+    st.info("🔜 Swap Languages")
+
+    st.markdown("---")
+
+    st.subheader("👨‍💻 Developer")
+
+    st.write("**Anurup Tiwari**")
+
+    st.caption("CodeAlpha AI Intern")
 # -----------------------------
 # LANGUAGE SELECTION
 # -----------------------------
