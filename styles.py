@@ -1,43 +1,57 @@
 def load_css():
     return """
-    <style>
+<style>
 
-    .main-title{
-        text-align:center;
-        font-size:48px;
-        font-weight:700;
-        color:#4F8BF9;
-        margin-top:10px;
-    }
+.block-container{
+    padding-top:2rem;
+    padding-bottom:2rem;
+}
 
-    .subtitle{
-        text-align:center;
-        font-size:18px;
-        color:#808080;
-        margin-bottom:25px;
-    }
+.main-title{
+    text-align:center;
+    font-size:48px;
+    font-weight:700;
+    color:#4F8BF9;
+}
 
-    .stButton>button{
-        width:100%;
-        height:45px;
-        border-radius:12px;
-        font-size:17px;
-        font-weight:bold;
-    }
+.subtitle{
+    text-align:center;
+    color:#808080;
+    font-size:18px;
+    margin-bottom:25px;
+}
 
-    textarea{
-        font-size:17px !important;
-    }
+.card{
 
-    .block-container{
-        padding-top:2rem;
-        padding-bottom:2rem;
-    }
+    padding:20px;
 
-    hr{
-        margin-top:15px;
-        margin-bottom:15px;
-    }
+    border-radius:15px;
 
-    </style>
-    """
+    border:1px solid rgba(255,255,255,.15);
+
+    margin-bottom:15px;
+
+}
+
+.stButton>button{
+
+    width:100%;
+
+    height:48px;
+
+    border-radius:12px;
+
+    font-size:17px;
+
+    font-weight:600;
+
+}
+
+textarea{
+
+    font-size:17px !important;
+
+}
+
+</style>
+"""

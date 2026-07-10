@@ -1,24 +1,37 @@
 import streamlit as st
-from styles import load_css
 
+from constants import (
+    APP_TITLE,
+    APP_ICON,
+    APP_SUBTITLE,
+    ABOUT_TEXT,
+    FEATURES,
+    DEFAULT_SOURCE_LANGUAGE,
+    DEFAULT_TARGET_LANGUAGE,
+)
+
+from styles import load_css
 from translator import Translator
 from tts import TextToSpeech
 from utils import (
     copy_to_clipboard,
     swap_languages,
-    clear_translation,
     initialize_session,
 )
 
-# -----------------------------
+# ==========================================================
 # PAGE CONFIGURATION
-# -----------------------------
+# ==========================================================
 
-st.set_page_config(page_title="AI Language Translator", page_icon="🌍", layout="wide")
+st.set_page_config(
+    page_title=APP_TITLE,
+    page_icon=APP_ICON,
+    layout="wide",
+)
 
-# -----------------------------
-# SESSION STATE
-# -----------------------------
+# ==========================================================
+# INITIALIZE
+# ==========================================================
 
 initialize_session()
 
@@ -27,152 +40,268 @@ tts = TextToSpeech()
 
 languages = translator.get_languages()
 
-# -----------------------------
-# CUSTOM CSS
-# -----------------------------
+# ==========================================================
+# LOAD CSS
+# ==========================================================
 
 st.markdown(load_css(), unsafe_allow_html=True)
 
-# -----------------------------
-# HEADER
-# -----------------------------
-
-st.markdown(
-    """
-    <div class='main-title'>
-        🌍 AI Language Translator
-    </div>
-
-    <div class='subtitle'>
-        Translate text between 100+ languages using Artificial Intelligence
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    "<div class='subtitle'>Translate text instantly using Artificial Intelligence</div>",
-    unsafe_allow_html=True,
-)
-
-st.divider()
-# -----------------------------
+# ==========================================================
 # SIDEBAR
-# -----------------------------
+# ==========================================================
 
 with st.sidebar:
 
-    st.title("🌍 AI Language Translator")
+    st.title(f"{APP_ICON} {APP_TITLE}")
 
-    st.markdown("---")
+    st.divider()
 
     st.subheader("📌 About")
 
-    st.write("""
-Translate text instantly between multiple languages using
-Google Translate AI.
+    st.write(ABOUT_TEXT)
 
-This project is developed as part of the
-**CodeAlpha Artificial Intelligence Internship**.
-""")
-
-    st.markdown("---")
+    st.divider()
 
     st.subheader("✨ Features")
 
-    st.success("✔ AI Translation")
-    st.success("✔ 100+ Languages")
-    st.success("✔ Copy Translation")
+    for feature in FEATURES:
+        st.success(f"✔ {feature}")
 
-    st.info("🔜 Text-to-Speech")
-    st.info("🔜 Translation History")
-    st.info("🔜 Swap Languages")
+    st.divider()
 
-    st.markdown("---")
+    st.subheader("📊 Session")
+
+    total = len(st.session_state["history"])
+
+    st.metric("Translations", total)
+
+    st.divider()
 
     st.subheader("👨‍💻 Developer")
 
     st.write("**Anurup Tiwari**")
 
-    st.caption("CodeAlpha AI Intern")
-# -----------------------------
+    st.caption("CodeAlpha AI Internship")
+
+# ==========================================================
+# HEADER
+# ==========================================================
+
+st.markdown(
+    f"""
+<div class="main-title">
+{APP_ICON} {APP_TITLE}
+</div>
+
+<div class="subtitle">
+{APP_SUBTITLE}
+</div>
+""",
+    unsafe_allow_html=True,
+)
+
+st.divider()
+
+# ==========================================================
 # LANGUAGE SELECTION
-# -----------------------------
+# ==========================================================
 
-col1, col2 = st.columns(2)
+left, middle, right = st.columns([5, 1, 5])
 
-with col1:
-    source_language = st.selectbox("Source Language", languages, index=0)
+with left:
 
-with col2:
-    target_language = st.selectbox(
-        "Target Language", languages, index=languages.index("English")
+    source_language = st.selectbox(
+        "🌐 Source Language",
+        languages,
+        index=languages.index(st.session_state["source_language"]),
     )
 
-# -----------------------------
-# INPUT TEXT
-# -----------------------------
+with middle:
+
+    st.write("")
+
+    st.write("")
+
+    if st.button("🔄"):
+
+        if source_language != DEFAULT_SOURCE_LANGUAGE:
+
+            source_language, target_language = swap_languages(
+                source_language,
+                st.session_state["target_language"],
+            )
+
+            st.session_state["source_language"] = source_language
+            st.session_state["target_language"] = target_language
+
+            st.rerun()
+
+with right:
+
+    target_language = st.selectbox(
+        "🎯 Target Language",
+        languages,
+        index=languages.index(st.session_state["target_language"]),
+    )
+
+# ==========================================================
+# INPUT
+# ==========================================================
 
 input_text = st.text_area(
-    "Enter Text", height=180, placeholder="Type something here..."
+    "📝 Enter Text",
+    value=st.session_state["input_text"],
+    height=220,
+    placeholder="Type something to translate...",
 )
-# -----------------------------
-# TRANSLATE BUTTON
-# -----------------------------
 
-if st.button("🚀 Translate", type="primary"):
+st.divider()
+# ==========================================================
+# TRANSLATION
+# ==========================================================
+
+translate_col1, translate_col2, translate_col3 = st.columns([2, 4, 2])
+
+with translate_col2:
+
+    translate_clicked = st.button(
+        "🚀 Translate",
+        type="primary",
+        use_container_width=True,
+    )
+
+if translate_clicked:
 
     if not input_text.strip():
-        st.warning("Please enter some text to translate.")
+
+        st.warning("Please enter some text.")
 
     else:
+
         try:
-            translated_text = translator.translate_text(
-                input_text,
-                source_language,
-                target_language,
-            )
+
+            with st.spinner("Translating..."):
+
+                translated_text = translator.translate_text(
+                    input_text,
+                    source_language,
+                    target_language,
+                )
+
+            # --------------------------
+            # Save session
+            # --------------------------
+
+            st.session_state["input_text"] = input_text
 
             st.session_state["translated_text"] = translated_text
 
-            st.success("Translation completed successfully!")
+            st.session_state["source_language"] = source_language
 
-            st.text_area(
-                "Translated Text",
-                translated_text,
-                height=180,
+            st.session_state["target_language"] = target_language
+
+            # --------------------------
+            # Save history
+            # --------------------------
+
+            st.session_state["history"].append(
+                {
+                    "source": source_language,
+                    "target": target_language,
+                    "input": input_text,
+                    "output": translated_text,
+                }
             )
 
-            col1, col2 = st.columns(2)
+        except Exception as e:
 
-            with col1:
-                if st.button("📋 Copy Translation"):
+            st.error(str(e))
 
-                    if copy_to_clipboard(translated_text):
-                        st.success("Translation copied to clipboard!")
-                    else:
-                        st.error("Unable to copy the translation.")
+# ==========================================================
+# OUTPUT
+# ==========================================================
 
-            with col2:
-                if st.button("🔊 Listen"):
+if st.session_state["translated_text"]:
 
-                    try:
-                        with st.spinner("Generating audio..."):
+    st.success("Translation completed successfully.")
 
-                            audio_path = tts.generate_audio(
-                                translated_text,
-                                target_language,
-                            )
+    st.text_area(
+        "📄 Translated Text",
+        value=st.session_state["translated_text"],
+        height=220,
+    )
+# ==========================================================
+# TOOLS
+# ==========================================================
 
-                            with open(audio_path, "rb") as audio_file:
-                                audio_bytes = audio_file.read()
+st.write("")
 
-                            st.audio(audio_bytes)
+tool_col1, tool_col2, tool_col3 = st.columns(3)
 
-                            tts.delete_audio(audio_path)
+# ----------------------------------------------------------
+# COPY
+# ----------------------------------------------------------
 
-                    except Exception as e:
-                        st.error(f"Audio Error: {e}")
+with tool_col1:
+
+    if st.button(
+        "📋 Copy",
+        use_container_width=True,
+        disabled=not st.session_state["translated_text"],
+    ):
+
+        if copy_to_clipboard(st.session_state["translated_text"]):
+
+            st.success("Copied to clipboard!")
+
+        else:
+
+            st.error("Unable to copy.")
+
+# ----------------------------------------------------------
+# TEXT TO SPEECH
+# ----------------------------------------------------------
+
+with tool_col2:
+
+    if st.button(
+        "🔊 Listen",
+        use_container_width=True,
+        disabled=not st.session_state["translated_text"],
+    ):
+
+        try:
+
+            with st.spinner("Generating audio..."):
+
+                audio_path = tts.generate_audio(
+                    st.session_state["translated_text"],
+                    st.session_state["target_language"],
+                )
+
+                with open(audio_path, "rb") as audio_file:
+
+                    audio_bytes = audio_file.read()
+
+                st.audio(audio_bytes)
+
+                tts.delete_audio(audio_path)
 
         except Exception as e:
-            st.error(f"Translation Error: {e}")
+
+            st.error(f"Audio Error: {e}")
+
+# ----------------------------------------------------------
+# DOWNLOAD
+# ----------------------------------------------------------
+
+with tool_col3:
+
+    st.download_button(
+        "📥 Download",
+        st.session_state["translated_text"],
+        file_name="translation.txt",
+        mime="text/plain",
+        use_container_width=True,
+        disabled=not st.session_state["translated_text"],
+    )

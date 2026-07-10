@@ -29,15 +29,13 @@ def clear_translation():
 
 
 def initialize_session():
-    """
-    Initialize Streamlit session variables.
-    """
 
     defaults = {
         "input_text": "",
         "translated_text": "",
         "source_language": "Auto Detect",
-        "target_language": "English"
+        "target_language": "English",
+        "history": [],
     }
 
     for key, value in defaults.items():

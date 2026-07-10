@@ -19,13 +19,14 @@ class Translator:
         if source_language == target_language:
             raise ValueError("Source and Target languages cannot be the same.")
 
-        source = "auto" if source_language == "Auto Detect" else self.languages[source_language.lower()]
+        source = (
+            "auto"
+            if source_language == "Auto Detect"
+            else self.languages[source_language.lower()]
+        )
         target = self.languages[target_language.lower()]
 
-        translator = GoogleTranslator(
-            source=source,
-            target=target
-        )
+        translator = GoogleTranslator(source=source, target=target)
 
         translated_text = translator.translate(text)
 
