@@ -1,4 +1,5 @@
 import streamlit as st
+from styles import load_css
 
 from translator import Translator
 from tts import TextToSpeech
@@ -6,18 +7,14 @@ from utils import (
     copy_to_clipboard,
     swap_languages,
     clear_translation,
-    initialize_session
+    initialize_session,
 )
 
 # -----------------------------
 # PAGE CONFIGURATION
 # -----------------------------
 
-st.set_page_config(
-    page_title="AI Language Translator",
-    page_icon="🌍",
-    layout="wide"
-)
+st.set_page_config(page_title="AI Language Translator", page_icon="🌍", layout="wide")
 
 # -----------------------------
 # SESSION STATE
@@ -34,65 +31,7 @@ languages = translator.get_languages()
 # CUSTOM CSS
 # -----------------------------
 
-st.markdown("""
-<style>
-
-.main-title{
-
-text-align:center;
-
-font-size:48px;
-
-font-weight:700;
-
-color:#4F8BF9;
-
-margin-top:10px;
-
-}
-
-.subtitle{
-
-text-align:center;
-
-font-size:18px;
-
-color:gray;
-
-margin-bottom:25px;
-
-}
-
-.stButton>button{
-
-width:100%;
-
-height:45px;
-
-border-radius:12px;
-
-font-weight:bold;
-
-font-size:17px;
-
-}
-
-textarea{
-
-font-size:17px !important;
-
-}
-
-.block-container{
-
-padding-top:2rem;
-
-padding-bottom:2rem;
-
-}
-
-</style>
-""", unsafe_allow_html=True)
+st.markdown(load_css(), unsafe_allow_html=True)
 
 # -----------------------------
 # HEADER
@@ -108,12 +47,12 @@ st.markdown(
         Translate text between 100+ languages using Artificial Intelligence
     </div>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 st.markdown(
     "<div class='subtitle'>Translate text instantly using Artificial Intelligence</div>",
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 st.divider()
@@ -163,17 +102,11 @@ This project is developed as part of the
 col1, col2 = st.columns(2)
 
 with col1:
-    source_language = st.selectbox(
-        "Source Language",
-        languages,
-        index=0
-    )
+    source_language = st.selectbox("Source Language", languages, index=0)
 
 with col2:
     target_language = st.selectbox(
-        "Target Language",
-        languages,
-        index=languages.index("English")
+        "Target Language", languages, index=languages.index("English")
     )
 
 # -----------------------------
@@ -181,9 +114,7 @@ with col2:
 # -----------------------------
 
 input_text = st.text_area(
-    "Enter Text",
-    height=180,
-    placeholder="Type something here..."
+    "Enter Text", height=180, placeholder="Type something here..."
 )
 # -----------------------------
 # TRANSLATE BUTTON
@@ -197,20 +128,14 @@ if st.button("🚀 Translate", type="primary"):
     else:
         try:
             translated_text = translator.translate_text(
-                input_text,
-                source_language,
-                target_language
+                input_text, source_language, target_language
             )
 
             st.session_state["translated_text"] = translated_text
 
             st.success("Translation completed successfully!")
 
-            st.text_area(
-                "Translated Text",
-                translated_text,
-                height=180
-            )
+            st.text_area("Translated Text", translated_text, height=180)
 
             if st.button("📋 Copy Translation"):
 
